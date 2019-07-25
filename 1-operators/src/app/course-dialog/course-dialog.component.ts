@@ -15,11 +15,11 @@ import {fromPromise} from 'rxjs/internal-compatibility';
 export class CourseDialogComponent implements OnInit, AfterViewInit {
 
     form: FormGroup;
-    course:Course;
+    course: Course;
 
     @ViewChild('saveButton', { static: true }) saveButton: ElementRef;
 
-    @ViewChild('searchInput', { static: true }) searchInput : ElementRef;
+    @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
     constructor(
         private fb: FormBuilder,
@@ -32,15 +32,25 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
             description: [course.description, Validators.required],
             category: [course.category, Validators.required],
             releasedAt: [moment(), Validators.required],
-            longDescription: [course.longDescription,Validators.required]
+            longDescription: [course.longDescription, Validators.required]
         });
 
     }
 
     ngOnInit() {
-
-
-
+      this.form.valueChanges
+        .pipe(
+          filter(() => this.form.valid)
+        ).subscribe(changes => {
+          const saveCourse$ = fromPromise(fetch(`/api/courses/${this.course.id}`, {
+            method: 'PUT',
+            body: JSON.stringify(changes),
+            headers: {
+              'content-type': 'application/json',
+            }
+          }));
+          saveCourse$.subscribe();
+        });
     }
 
 
