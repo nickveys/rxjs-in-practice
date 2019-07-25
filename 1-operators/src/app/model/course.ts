@@ -1,5 +1,3 @@
-
-
 export interface Course {
     id: number;
     description: string;
@@ -10,7 +8,7 @@ export interface Course {
     lessonsCount: number;
 }
 
-export type Courses = readonly Course[];
+export type Courses = Course[];
 
 export interface CoursesResponse {
   payload: Courses;

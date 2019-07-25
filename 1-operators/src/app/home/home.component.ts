@@ -11,9 +11,9 @@ import { CoursesResponse, Course } from '../model/course';
 })
 export class HomeComponent implements OnInit {
 
-  beginnerCourses: readonly Course[];
+  beginnerCourses$: Observable<Course[]>;
 
-  advancedCourses: readonly Course[];
+  advancedCourses$: Observable<Course[]>;
 
   constructor() {
 
@@ -27,15 +27,14 @@ export class HomeComponent implements OnInit {
         map(resp => resp.payload)
       );
 
-    courses$.subscribe(
-      courses => {
-        this.beginnerCourses = courses
-          .filter(c => c.category === 'BEGINNER');
-        this.advancedCourses = courses
-          .filter(c => c.category === 'ADVANCED');
-      },
-      noop,
-      () => console.log('completed')
-    );
+    this.beginnerCourses$ = courses$
+      .pipe(
+        map(courses => courses.filter(course => course.category === 'BEGINNER'))
+      );
+
+    this.advancedCourses$ = courses$
+      .pipe(
+        map(courses => courses.filter(course => course.category === 'ADVANCED'))
+      );
   }
 }
